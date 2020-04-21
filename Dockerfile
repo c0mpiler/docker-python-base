@@ -87,6 +87,23 @@ RUN \
     DEBIAN_FRONTEND=noninteractive apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q && \
     DEBIAN_FRONTEND=noninteractive apt-get clean
+    
+# ---------------------------------------------------------------------------------------------
+# MPICH
+# ---------------------------------------------------------------------------------------------
+WORKDIR /usr/local/src/mpich
+
+RUN wget -qO- http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz \
+    |tar xfz - -C /usr/local/src/mpich --strip-components=1 \
+ && ./configure --disable-fortran --enable-fast=all,O3 --prefix=/usr \
+ && make -j$(nproc) \
+ && make install \
+ && ldconfig \
+ && cd / \
+ && rm -rf /usr/local/src/mpich
+
+ENV OMPI_MCA_btl_base_warn_component_unused=0
+
 
 RUN \
     python3 -m pip install pip -U
