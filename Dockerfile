@@ -103,6 +103,11 @@ RUN wget -qO- http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz \
  && rm -rf /usr/local/src/mpich
 
 ENV OMPI_MCA_btl_base_warn_component_unused=0
+WORKDIR /usr/local/src
+COPY hello.c .
+RUN mpicc -o /usr/local/bin/hello hello.c
+RUN mpirun -n 2 /usr/local/bin/hello
+RUN mpirun -n 2 /usr/local/bin/hello 1
 
 
 RUN \
